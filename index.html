@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="URL 및 텍스트를 고화질 QR 코드로 즉시 변환하는 모던 웹앱입니다. 색상 커스텀, 로고 삽입, 고해상도 PNG 다운로드를 지원합니다.">
+  <title>QR Studio - 프리미엄 QR 코드 생성기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 배경 데코레이션 블러 구체 -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <div class="app-container">
+    <!-- 헤더 -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <path d="M7 7h.01"></path>
+            <path d="M17 7h.01"></path>
+            <path d="M7 17h.01"></path>
+            <path d="M17 17h.01"></path>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>QR <span>Studio</span></h1>
+          <p class="tagline">오프라인 지원 · 고화질 커스텀 QR 코드 생성기</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="status-badge" id="offline-badge">
+          <span class="status-dot"></span> 로컬 단독 실행 준비됨
+        </span>
+      </div>
+    </header>
+
+    <!-- 메인 레이아웃 (2열 구성) -->
+    <main class="main-content">
+      <!-- 왼쪽 패널: 컨트롤 & 입력 -->
+      <section class="panel control-panel">
+        <!-- 탭 네비게이션 -->
+        <div class="tab-navigation" role="tablist">
+          <button class="tab-btn active" data-tab="url" role="tab" aria-selected="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            URL
+          </button>
+          <button class="tab-btn" data-tab="text" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"></line><line x1="21" y1="6" x2="3" y2="6"></line><line x1="21" y1="14" x2="3" y2="14"></line><line x1="17" y1="18" x2="3" y2="18"></line></svg>
+            텍스트
+          </button>
+          <button class="tab-btn" data-tab="wifi" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            와이파이
+          </button>
+          <button class="tab-btn" data-tab="vcard" role="tab" aria-selected="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            연락처
+          </button>
+        </div>
+
+        <!-- 탭 컨텐츠 영역 -->
+        <div class="tab-content-wrapper">
+          <!-- 1. URL 탭 -->
+          <div class="tab-pane active" id="pane-url">
+            <div class="form-group">
+              <label for="url-input" class="form-label">
+                <span>웹사이트 URL 입력</span>
+                <span class="url-helper-badge" id="url-protocol-badge">https://</span>
+              </label>
+              <div class="input-with-actions">
+                <input type="url" id="url-input" class="form-input" placeholder="https://example.com" value="https://google.com" autofocus autocomplete="off">
+                <button type="button" class="action-icon-btn" id="btn-paste-url" title="클립보드에서 붙여넣기">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                </button>
+                <button type="button" class="action-icon-btn" id="btn-clear-url" title="지우기">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+              <div class="quick-links">
+                <span class="quick-label">빠른 프리셋:</span>
+                <button type="button" class="chip-btn" data-url="https://naver.com">Naver</button>
+                <button type="button" class="chip-btn" data-url="https://youtube.com">YouTube</button>
+                <button type="button" class="chip-btn" data-url="https://github.com">GitHub</button>
+                <button type="button" class="chip-btn" data-url="https://instagram.com">Instagram</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 일반 텍스트 탭 -->
+          <div class="tab-pane" id="pane-text">
+            <div class="form-group">
+              <label for="text-input" class="form-label">자유 텍스트 입력</label>
+              <textarea id="text-input" class="form-textarea" rows="3" placeholder="메모, 안내문, 텍스트 메시지를 입력하세요..."></textarea>
+            </div>
+          </div>
+
+          <!-- 3. 와이파이 탭 -->
+          <div class="tab-pane" id="pane-wifi">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="wifi-ssid" class="form-label">네트워크 이름 (SSID)</label>
+                <input type="text" id="wifi-ssid" class="form-input" placeholder="예: MyHome_5G">
+              </div>
+              <div class="form-group flex-1">
+                <label for="wifi-auth" class="form-label">보안 종류</label>
+                <select id="wifi-auth" class="form-select">
+                  <option value="WPA">WPA / WPA2 / WPA3</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">보안 없음 (Open)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" id="wifi-pass-group">
+              <label for="wifi-pass" class="form-label">와이파이 비밀번호</label>
+              <input type="password" id="wifi-pass" class="form-input" placeholder="비밀번호 입력">
+            </div>
+            <p class="field-hint">스마트폰 카메라로 스캔하면 번거로운 비밀번호 입력 없이 자동으로 Wi-Fi에 연결됩니다.</p>
+          </div>
+
+          <!-- 4. 연락처 vCard 탭 -->
+          <div class="tab-pane" id="pane-vcard">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="vcard-name" class="form-label">이름</label>
+                <input type="text" id="vcard-name" class="form-input" placeholder="홍길동">
+              </div>
+              <div class="form-group flex-1">
+                <label for="vcard-phone" class="form-label">전화번호</label>
+                <input type="tel" id="vcard-phone" class="form-input" placeholder="010-1234-5678">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="vcard-email" class="form-label">이메일</label>
+              <input type="email" id="vcard-email" class="form-input" placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+              <label for="vcard-org" class="form-label">회사 / 직함</label>
+              <input type="text" id="vcard-org" class="form-input" placeholder="회사명 또는 소속">
+            </div>
+          </div>
+        </div>
+
+        <!-- 커스터마이징 아코디언/섹션 -->
+        <div class="custom-section">
+          <div class="section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>디자인 & 스타일 커스텀</span>
+          </div>
+
+          <!-- 색상 설정 -->
+          <div class="style-row">
+            <div class="color-control">
+              <label class="control-sublabel">QR 코드 색상</label>
+              <div class="color-picker-box">
+                <input type="color" id="qr-color-dark" value="#0f172a" class="color-input">
+                <span class="color-hex" id="hex-dark">#0F172A</span>
+              </div>
+            </div>
+            <div class="color-control">
+              <label class="control-sublabel">배경 색상</label>
+              <div class="color-picker-box">
+                <input type="color" id="qr-color-light" value="#ffffff" class="color-input">
+                <span class="color-hex" id="hex-light">#FFFFFF</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 추천 컬러 프리셋 -->
+          <div class="presets-row">
+            <span class="preset-label">테마 프리셋:</span>
+            <button type="button" class="theme-preset-btn active" data-dark="#0f172a" data-light="#ffffff" title="클래식 모노크롬">
+              <span class="split-color" style="background: linear-gradient(135deg, #0f172a 50%, #ffffff 50%)"></span>
+              클래식
+            </button>
+            <button type="button" class="theme-preset-btn" data-dark="#4f46e5" data-light="#ffffff" title="인디고 블루">
+              <span class="split-color" style="background: linear-gradient(135deg, #4f46e5 50%, #ffffff 50%)"></span>
+              인디고
+            </button>
+            <button type="button" class="theme-preset-btn" data-dark="#059669" data-light="#ffffff" title="에메랄드 그린">
+              <span class="split-color" style="background: linear-gradient(135deg, #059669 50%, #ffffff 50%)"></span>
+              에메랄드
+            </button>
+            <button type="button" class="theme-preset-btn" data-dark="#dc2626" data-light="#ffffff" title="루비 레드">
+              <span class="split-color" style="background: linear-gradient(135deg, #dc2626 50%, #ffffff 50%)"></span>
+              루비
+            </button>
+            <button type="button" class="theme-preset-btn" data-dark="#ffffff" data-light="#111827" title="다크 모드 역전">
+              <span class="split-color" style="background: linear-gradient(135deg, #ffffff 50%, #111827 50%)"></span>
+              인버스
+            </button>
+          </div>
+
+          <!-- 크기 및 여백 슬라이더 -->
+          <div class="sliders-grid">
+            <div class="slider-group">
+              <div class="slider-header">
+                <label for="qr-size-slider" class="control-sublabel">QR 해상도 크기</label>
+                <span class="slider-value" id="qr-size-val">320 px</span>
+              </div>
+              <input type="range" id="qr-size-slider" min="180" max="600" step="20" value="320" class="custom-range">
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <label for="qr-margin-slider" class="control-sublabel">테두리 여백 (패딩)</label>
+                <span class="slider-value" id="qr-margin-val">20 px</span>
+              </div>
+              <input type="range" id="qr-margin-slider" min="0" max="50" step="5" value="20" class="custom-range">
+            </div>
+          </div>
+
+          <!-- 로고 및 복원력 설정 -->
+          <div class="options-grid">
+            <div class="form-group flex-1">
+              <label for="error-correction" class="control-sublabel">오류 복원율 (ECL)</label>
+              <select id="error-correction" class="form-select">
+                <option value="L">L (7% 복원 - 가장 심플한 패턴)</option>
+                <option value="M">M (15% 복원 - 기본 권장)</option>
+                <option value="Q">Q (25% 복원 - 높은 안정성)</option>
+                <option value="H" selected>H (30% 복원 - 로고 삽입 최적)</option>
+              </select>
+            </div>
+
+            <div class="form-group flex-1">
+              <div class="logo-control-header">
+                <label class="control-sublabel">중앙 로고 / 아이콘</label>
+                <span class="logo-badge-hint" id="logo-status-hint">권장: 정방형 PNG</span>
+              </div>
+              
+              <!-- 로고 프리셋 칩 버튼들 -->
+              <div class="logo-preset-chips" id="logo-preset-group">
+                <button type="button" class="logo-chip-btn active" data-logo="none">없음</button>
+                <button type="button" class="logo-chip-btn" data-logo="link">🔗 링크</button>
+                <button type="button" class="logo-chip-btn" data-logo="globe">🌐 웹</button>
+                <button type="button" class="logo-chip-btn" data-logo="wifi">📶 Wi-Fi</button>
+                <button type="button" class="logo-chip-btn" data-logo="star">⭐ 별</button>
+              </div>
+
+              <!-- 커스텀 이미지 업로드 전용 컨트롤 -->
+              <div class="custom-logo-uploader" id="custom-logo-uploader">
+                <input type="file" id="custom-logo-input" accept="image/png, image/jpeg, image/svg+xml, image/webp" style="display: none;">
+                
+                <button type="button" class="btn-upload-logo" id="btn-trigger-upload">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>내 로고 이미지 파일 선택...</span>
+                </button>
+
+                <!-- 업로드된 파일 미리보기 뱃지 (업로드 시 표시) -->
+                <div class="uploaded-logo-preview" id="uploaded-logo-preview" style="display: none;">
+                  <img id="logo-preview-thumb" src="" alt="로고 미리보기" class="logo-thumb-img">
+                  <span class="logo-file-name" id="logo-file-name">logo.png</span>
+                  <button type="button" class="btn-remove-logo" id="btn-remove-logo" title="로고 제거">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 실행 버튼 그룹 -->
+        <div class="action-buttons-row">
+          <button type="button" class="btn btn-primary" id="btn-generate">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            <span>QR 코드 새로고침</span>
+          </button>
+          <label class="auto-update-toggle">
+            <input type="checkbox" id="auto-update-check" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">실시간 즉시 반영</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 오른쪽 패널: QR 미리보기 & 다운로드 -->
+      <section class="panel preview-panel">
+        <div class="preview-card">
+          <div class="preview-header">
+            <div class="preview-badge">
+              <span class="pulse-dot"></span> 실시간 미리보기
+            </div>
+            <div class="ecl-indicator" id="current-ecl-label">복원율: High (30%)</div>
+          </div>
+
+          <!-- 실제 QR 코드가 렌더링되는 캔버스 래퍼 -->
+          <div class="qr-canvas-container" id="qr-container-wrapper">
+            <div id="qrcode-box" class="qrcode-box">
+              <!-- QRCode.js 라이브러리 및 합성 캔버스가 여기에 삽입됩니다 -->
+            </div>
+            <!-- 확대보기 플로팅 버튼 -->
+            <button type="button" class="preview-zoom-btn" id="btn-zoom-qr" title="크게 보기">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+            </button>
+          </div>
+
+          <!-- 연결된 내용 요약 바 -->
+          <div class="content-summary-card">
+            <div class="summary-label">
+              <span id="summary-type-tag">URL</span>
+              <span class="char-count" id="summary-char-count">21자</span>
+            </div>
+            <div class="summary-value" id="summary-text-display">https://google.com</div>
+          </div>
+
+          <!-- 다운로드 & 내보내기 버튼들 -->
+          <div class="download-group">
+            <div class="export-main-actions">
+              <button type="button" class="btn btn-download-png" id="btn-download-png">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>PNG 고화질 다운로드</span>
+              </button>
+              <button type="button" class="btn btn-copy" id="btn-copy-image" title="클립보드로 이미지 복사">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>이미지 복사</span>
+              </button>
+            </div>
+            <div class="export-sub-actions">
+              <button type="button" class="btn btn-sub" id="btn-download-2x" title="2배수 레티나 초고해상도 다운로드">
+                2X UHD 저장
+              </button>
+              <button type="button" class="btn btn-sub" id="btn-print-qr" title="인쇄 미리보기">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                인쇄
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 최근 생성 히스토리 -->
+        <div class="history-card">
+          <div class="history-header">
+            <h3>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              최근 생성 기록
+            </h3>
+            <button type="button" class="btn-clear-history" id="btn-clear-history">기록 삭제</button>
+          </div>
+          <div class="history-list" id="history-items-container">
+            <p class="empty-history-text">생성된 QR 코드가 여기에 자동 저장됩니다.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="app-footer">
+      <p>QR Studio · 단독 정적 웹앱 (Pure HTML/CSS/JS) · No Server Required · Chromium 호환</p>
+    </footer>
+  </div>
+
+  <!-- 라이트박스 확대 모달 -->
+  <div class="modal-overlay" id="zoom-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>QR 코드 확대 보기</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-qr-target">
+        <!-- 확대된 캔버스/이미지 삽입 -->
+      </div>
+      <div class="modal-footer">
+        <p id="modal-info-text"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 토스트 알림 컨테이너 -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- 로컬 라이브러리 스크립트 (서버 없이 file:/// 환경에서도 100% 동작) -->
+  <script src="qrcode.min.js"></script>
+  <!-- 메인 애플리케이션 로직 -->
+  <script src="script.js"></script>
+</body>
+</html>
